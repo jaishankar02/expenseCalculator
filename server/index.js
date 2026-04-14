@@ -113,6 +113,10 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'hishabchecker-server' });
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).send('ok');
+});
+
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
