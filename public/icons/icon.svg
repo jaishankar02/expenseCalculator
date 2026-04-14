@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="HishabChecker">
+  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <circle cx="256" cy="256" r="168" fill="#2563eb"/>
+  <path d="M176 248h160v32H176z" fill="#e2e8f0"/>
+  <path d="M240 176h32v160h-32z" fill="#e2e8f0"/>
+</svg>
