@@ -218,6 +218,16 @@ function App() {
     }
   };
 
+  const copyToClipboard = async (value, label) => {
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      alert(`✅ Copied ${label} to clipboard`);
+    } catch (err) {
+      alert('❌ Copy failed. Please copy manually.');
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header" style={{ marginBottom: '3rem', textAlign: 'center', position: 'relative' }}>
@@ -355,39 +365,27 @@ function App() {
                               </div>
 
                               <div className="upi-app-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                <a
-                                  href={upiLink || '#'}
-                                  onClick={(e) => !upiLink && e.preventDefault()}
+                                <button
+                                  type="button"
                                   className="btn-outline"
-                                  style={{ opacity: upiLink ? 1 : 0.5, pointerEvents: upiLink ? 'auto' : 'none' }}
+                                  disabled={!receiverUpiId}
+                                  onClick={() => copyToClipboard(receiverUpiId, 'UPI ID')}
                                 >
-                                  Open in GPay
-                                </a>
-                                <a
-                                  href={upiLink || '#'}
-                                  onClick={(e) => !upiLink && e.preventDefault()}
+                                  Copy UPI ID
+                                </button>
+                                <button
+                                  type="button"
                                   className="btn-outline"
-                                  style={{ opacity: upiLink ? 1 : 0.5, pointerEvents: upiLink ? 'auto' : 'none' }}
+                                  disabled={!upiLink}
+                                  onClick={() => copyToClipboard(upiLink, 'UPI link')}
                                 >
-                                  Open in PhonePe
-                                </a>
-                                <a
-                                  href={upiLink || '#'}
-                                  onClick={(e) => !upiLink && e.preventDefault()}
-                                  className="btn-outline"
-                                  style={{ opacity: upiLink ? 1 : 0.5, pointerEvents: upiLink ? 'auto' : 'none' }}
-                                >
-                                  Open in Paytm
-                                </a>
-                                <a
-                                  href={upiLink || '#'}
-                                  onClick={(e) => !upiLink && e.preventDefault()}
-                                  className="btn-outline"
-                                  style={{ opacity: upiLink ? 1 : 0.5, pointerEvents: upiLink ? 'auto' : 'none' }}
-                                >
-                                  Open in BHIM
-                                </a>
+                                  Copy UPI Link
+                                </button>
                               </div>
+
+                              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                Open any UPI app and paste the copied UPI ID or link.
+                              </p>
 
                               {!receiverUpiId && (
                                 <p style={{ fontSize: '0.8rem', color: 'var(--danger)' }}>
