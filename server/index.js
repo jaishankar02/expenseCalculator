@@ -13,15 +13,19 @@ const SettlementRequest = require('./models/SettlementRequest');
 const FriendRequest = require('./models/FriendRequest');
 const ExpenseDeleteRequest = require('./models/ExpenseDeleteRequest');
 
+const normalizeOrigin = (value) => String(value || '').trim().replace(/\/$/, '');
+
 const CLIENT_URLS = (process.env.CLIENT_URLS || process.env.CLIENT_URL || '')
   .split(',')
-  .map((url) => url.trim())
+  .map((url) => normalizeOrigin(url))
   .filter(Boolean);
 
 const isOriginAllowed = (origin) => {
   if (!origin) return true;
 
-  if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  if (normalizedOrigin.includes('localhost') || normalizedOrigin.includes('127.0.0.1')) {
     return true;
   }
 
@@ -29,7 +33,13 @@ const isOriginAllowed = (origin) => {
     return true;
   }
 
-  return CLIENT_URLS.includes(origin);
+  return CLIENT_URLS.some((allowed) => {
+    if (allowed.startsWith('*.')) {
+      const suffix = allowed.slice(1);
+      return normalizedOrigin.endsWith(suffix);
+    }
+    return allowed === normalizedOrigin;
+  });
 };
 
 const corsOptions = {
@@ -37,7 +47,7 @@ const corsOptions = {
     if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -50,6 +60,7 @@ const io = new Server(server, {
 });
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // JWT Secret
